@@ -6,5 +6,5 @@ fs.ensureDirSync('public');
 
 fs.copySync(
   path.resolve(process.cwd(), 'tools/sw/pwa'),
-  path.resolve(process.cwd(), 'public')
+  path.resolve(process.cwd(), 'build')
 );

@@ -5,6 +5,7 @@ import webpack from 'webpack';
 const common = require('./webpack.common.ts');
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import {GenerateSW, InjectManifest} from "workbox-webpack-plugin";
 import TerserPlugin from 'terser-webpack-plugin';
 import ImageMinimizerPlugin from "image-minimizer-webpack-plugin";
 import paths from '../config/paths';
@@ -16,7 +17,6 @@ const imageTypeIgnoreCopy = ['.png', '.jpg', '.jpeg', '.gif', '.svg'];
 module.exports = merge(common, {
   entry: {
     app: appIndexJs,
-    sw: './public/sw.js'
   },
   mode: 'production',
   devtool: false,
@@ -60,6 +60,24 @@ module.exports = merge(common, {
     new webpack.ProgressPlugin({
       modulesCount: 5000,
     }),
+    new InjectManifest({
+      swSrc: "./tools/sw/pwa/sw.js",
+      swDest: "sw.js",
+      exclude: [
+        /\.map$/,
+        /manifest$/,
+        /\.htaccess$/,
+        /service-worker\.js$/,
+        /sw\.js$/,
+      ],
+    }),
+    // new WorkboxPlugin({
+    //   globDirectory: 'build',
+    //   globPatterns: ["**/*.{html,js,css}"],
+    //   globIgnores: ["workbox-sw.prod.*.js"],
+    //   swSrc: path.join('tools/sw/pwa', "sw.js"),
+    //   swDest: path.join('build', "sw.js"),
+    // })
   ],
   output: {
     publicPath: '',

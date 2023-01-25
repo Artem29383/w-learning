@@ -1,48 +1,59 @@
-import React from 'react';
-import {Route, Switch, NavLink} from "react-router-dom";
+import React, {useState} from 'react';
+import {NavLink} from "react-router-dom";
+import {normalize as Normalize} from './styles/normalize'
+import {global as Global} from './styles/global';
 import styled from "styled-components";
-import Logo from './../public/static/images/webpack.png';
+import {Routes} from "./styles/routes";
+import {Navigation} from "./navigation/Navigation";
+import {authRef} from "../firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 const Link = styled(NavLink)`
-    height: 100px;
-    width: 100px;
-    display: block;
-    background-color: #000;
+    text-decoration: underline;
+    color: blueviolet;
 `;
 
-const Count = () => {
-    return (
-        <div>
-           123
-        </div>
-    );
-};
+const LogIn = styled.div`
+    display: flex;
+    gap: 10px;
+    align-items: center;
+`;
 
-const Welcome = () => {
-    return (
-        <div>
-            welcome
-        </div>
-    );
-};
+export const Main = () => {
+    const [user, setUser] = useState(null)
 
-const Main = () => {
+    const handleLogIn = async () => {
+        const user = await signInWithEmailAndPassword(authRef, 'artemPWA@test.com', "123123")
+        setUser(user.user);
+    }
+    console.info('user', user)
+    // useEffect(() => {
+    //     createUserWithEmailAndPassword(authRef, 'artemPWA@test.com', "123123").then(r => {
+    //         console.log('r', r);
+    //     });
+    // }, [])
+
     return (
         <div>
-            <img src={Logo} alt=""/>
-            <Link to="/count">Count</Link>
-            <Link to="/welcome" >Welcome</Link>
+            {user ? <Link to={Routes.todolist.path}>TodoList</Link> : (
+                <LogIn>
+                    <input type="text" placeholder={'login'}/>
+                    <input type="text" placeholder={'email'}/>
+                    <button onClick={handleLogIn}>Log In</button>
+                </LogIn>
+            )}
         </div>
     )
 }
 
 function App() {
     return (
-        <Switch>
-            <Route path="/" exact component={Main} />
-            <Route path="/count" component={Count} />
-            <Route path="/welcome" component={Welcome} />
-        </Switch>
+        <>
+            <Global />
+            <Normalize />
+            <Navigation />
+        </>
     );
 }
+
 export default App;
